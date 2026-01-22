@@ -9,9 +9,11 @@ use EvolutionCMS\ePasskeys\Support\Serializer;
 use Throwable;
 use Webauthn\AuthenticatorAssertionResponse;
 use Webauthn\AuthenticatorAssertionResponseValidator;
+use Webauthn\CredentialRecord;
 use Webauthn\PublicKeyCredential;
 use Webauthn\PublicKeyCredentialRequestOptions;
 use Webauthn\PublicKeyCredentialSource;
+use Webauthn\Util\CredentialRecordConverter;
 
 class FindPasskeyToAuthenticateAction
 {
@@ -97,13 +99,18 @@ class FindPasskeyToAuthenticateAction
         try {
             $validator = AuthenticatorAssertionResponseValidator::create($requestCsm);
 
-            return $validator->check(
+            $result = $validator->check(
                 publicKeyCredentialSource: $passkey->data,
                 authenticatorAssertionResponse: $publicKeyCredential->response,
                 publicKeyCredentialRequestOptions: $passkeyOptions,
                 host: $hostName,
                 userHandle: null,
             );
+            if ($result instanceof CredentialRecord) {
+                return CredentialRecordConverter::toPublicKeyCredentialSource($result);
+            }
+
+            return $result;
         } catch (Throwable $exception) {
             throw InvalidPasskey::invalidAuthenticatorAssertionResponse($exception);
         }

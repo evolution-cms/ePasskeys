@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Throwable;
 use Webauthn\AuthenticatorAttestationResponse;
 use Webauthn\AuthenticatorAttestationResponseValidator;
+use Webauthn\CredentialRecord;
 use Webauthn\PublicKeyCredential;
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialSource;
+use Webauthn\Util\CredentialRecordConverter;
 
 class StorePasskeyAction
 {
@@ -60,11 +62,16 @@ class StorePasskeyAction
         $creationCsm = $csmFactory->creationCeremony();
 
         try {
-            return AuthenticatorAttestationResponseValidator::create($creationCsm)->check(
+            $result = AuthenticatorAttestationResponseValidator::create($creationCsm)->check(
                 authenticatorAttestationResponse: $publicKeyCredential->response,
                 publicKeyCredentialCreationOptions: $passkeyOptions,
                 host: $hostName,
             );
+            if ($result instanceof CredentialRecord) {
+                return CredentialRecordConverter::toPublicKeyCredentialSource($result);
+            }
+
+            return $result;
         } catch (Throwable $exception) {
             throw InvalidPasskey::invalidAuthenticatorAttestationResponse($exception);
         }
