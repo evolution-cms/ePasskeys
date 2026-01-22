@@ -209,7 +209,7 @@ class Config
     public static function getPasskeyModel(): string
     {
         $model = self::settings()['models']['passkey'] ?? null;
-        return is_string($model) && $model !== '' ? $model : \\EvolutionCMS\\ePasskeys\\Models\\Passkey::class;
+        return is_string($model) && $model !== '' ? $model : \EvolutionCMS\ePasskeys\Models\Passkey::class;
     }
 
     public static function getAuthenticatableModel(): string
