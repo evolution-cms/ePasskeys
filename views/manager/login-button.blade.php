@@ -20,22 +20,27 @@
         .epasskeys-login__toggle {
             display: inline-block;
             margin-top: 0.5rem;
-            font-size: 0.75rem;
-            color: #cbd5f5;
-            text-decoration: underline;
+т            font-size: 0.8125rem;
+            color: #818a91;
+            text-decoration: none;
             background: none;
             border: none;
             padding: 0;
             cursor: pointer;
         }
-        .loginbox-light .epasskeys-login__toggle { color: #4b5a78; }
+        .epasskeys-login__toggle:hover,
+        .epasskeys-login__toggle:focus {
+            color: #014c8c;
+            text-decoration: underline;
+        }
+        .loginbox-light .epasskeys-login__toggle { color: #666; }
         .epasskeys-login__button:hover,
         .epasskeys-login__button:focus {
             background-color: #5cb85c;
             border-color: #5cb85c;
         }
         .loginbox-light .epasskeys-login__button {
-            color: #444;
+            color: #fff;
             background-color: #449d44;
             border-color: #419641;
         }
@@ -75,7 +80,7 @@
             responseInputId: 'epasskeys-auth-response',
             rememberInputId: 'epasskeys-remember',
             rememberSelector: '#rememberme',
-            auto: true
+            auto: false
         });
     </script>
     <script>
