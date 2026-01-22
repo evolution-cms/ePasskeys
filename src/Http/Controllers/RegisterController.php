@@ -5,10 +5,10 @@ namespace EvolutionCMS\ePasskeys\Http\Controllers;
 use EvolutionCMS\ePasskeys\Actions\StorePasskeyAction;
 use EvolutionCMS\ePasskeys\Support\Config;
 use EvolutionCMS\ePasskeys\Support\Log;
+use EvolutionCMS\ePasskeys\Support\SessionStore;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Session;
 
 class RegisterController
 {
@@ -36,7 +36,7 @@ class RegisterController
             'name' => ['required', 'string', 'max:255'],
         ])->validate();
 
-        $optionsJson = Session::pull('epasskeys.mgr.register.options');
+        $optionsJson = SessionStore::pull('epasskeys.mgr.register.options');
         if (!is_string($optionsJson) || $optionsJson === '') {
             Log::warning('Registration options missing or expired.');
             return redirect()->back()->with('epasskeys.message', 'Registration options expired.');

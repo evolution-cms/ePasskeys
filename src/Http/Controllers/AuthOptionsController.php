@@ -5,9 +5,9 @@ namespace EvolutionCMS\ePasskeys\Http\Controllers;
 use EvolutionCMS\ePasskeys\Actions\GeneratePasskeyAuthenticationOptionsAction;
 use EvolutionCMS\ePasskeys\Support\Config;
 use EvolutionCMS\ePasskeys\Support\Log;
+use EvolutionCMS\ePasskeys\Support\SessionStore;
 use EvolutionCMS\ePasskeys\Support\Throttle;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 
 class AuthOptionsController
 {
@@ -36,7 +36,7 @@ class AuthOptionsController
         );
 
         $optionsJson = $action->execute(true);
-        Session::put('epasskeys.mgr.auth.options', $optionsJson);
+        SessionStore::put('epasskeys.mgr.auth.options', $optionsJson);
 
         return response($optionsJson, 200, ['Content-Type' => 'application/json']);
     }

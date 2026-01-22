@@ -5,6 +5,7 @@ namespace EvolutionCMS\ePasskeys\Http\Controllers;
 use EvolutionCMS\ePasskeys\Actions\FindPasskeyToAuthenticateAction;
 use EvolutionCMS\ePasskeys\Support\Config;
 use EvolutionCMS\ePasskeys\Support\Log;
+use EvolutionCMS\ePasskeys\Support\SessionStore;
 use EvolutionCMS\ePasskeys\Support\Throttle;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class AuthenticateController
             'start_authentication_response' => ['required', 'string'],
         ])->validate();
 
-        $optionsJson = Session::pull('epasskeys.mgr.auth.options');
+        $optionsJson = SessionStore::pull('epasskeys.mgr.auth.options');
         if (!is_string($optionsJson) || $optionsJson === '') {
             return $this->invalidPasskeyResponse();
         }
