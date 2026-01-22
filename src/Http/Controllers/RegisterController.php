@@ -38,6 +38,7 @@ class RegisterController
 
         $optionsJson = Session::pull('epasskeys.mgr.register.options');
         if (!is_string($optionsJson) || $optionsJson === '') {
+            Log::warning('Registration options missing or expired.');
             return redirect()->back()->with('epasskeys.message', 'Registration options expired.');
         }
 
@@ -45,6 +46,7 @@ class RegisterController
         $modelClass = Config::getAuthenticatableModel();
         $authenticatable = $modelClass::query()->find($userId);
         if (!$authenticatable) {
+            Log::error('Authenticatable model not found for ID: ' . (string)$userId);
             abort(404);
         }
 
@@ -71,8 +73,16 @@ class RegisterController
                 ],
             );
         } catch (\Throwable $exception) {
-            Log::error('Failed to store passkey: ' . $exception->getMessage());
-            return redirect()->back()->with('epasskeys.message', 'Failed to store passkey.');
+            $detail = trim($exception->getMessage());
+            $label = get_class($exception);
+            Log::error('Failed to store passkey: ' . $label . ($detail !== '' ? (' - ' . $detail) : ''));
+
+            $debug = function_exists('config') ? (bool)config('app.debug') : false;
+            $message = $debug && $detail !== ''
+                ? 'Failed to store passkey: ' . $detail
+                : 'Failed to store passkey.';
+
+            return redirect()->back()->with('epasskeys.message', $message);
         }
 
         $this->firePasskeyEvent('OnPasskeyRegistered', $passkey, $request);
