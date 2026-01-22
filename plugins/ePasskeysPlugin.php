@@ -52,10 +52,37 @@ Event::listen('evolution.OnManagerLoginFormRender', function () {
                 if (!$userId && isset($_SESSION['mgrInternalKey'])) {
                     $userId = (int)$_SESSION['mgrInternalKey'];
                 }
+                if (!$userId && isset($_SESSION['mgrShortname'])) {
+                    $username = is_string($_SESSION['mgrShortname']) ? $_SESSION['mgrShortname'] : null;
+                    if ($username) {
+                        $userModel = Config::getAuthenticatableModel();
+                        if (class_exists($userModel)) {
+                            $userId = $userModel::query()
+                                ->where('username', $username)
+                                ->value('id');
+                        }
+                    }
+                }
+                if (!$userId && isset($_SESSION['mgrEmail'])) {
+                    $email = is_string($_SESSION['mgrEmail']) ? $_SESSION['mgrEmail'] : null;
+                    if ($email) {
+                        $userModel = Config::getAuthenticatableModel();
+                        if (class_exists($userModel)) {
+                            $userId = $userModel::query()
+                                ->where('email', $email)
+                                ->value('id');
+                        }
+                    }
+                }
                 if ($userId) {
                     $hasPasskey = $modelClass::query()
                         ->where('context', 'mgr')
                         ->where('authenticatable_id', $userId)
+                        ->exists();
+                } else {
+                    // Fallback: if we cannot resolve user, show passkey if any exist.
+                    $hasPasskey = $modelClass::query()
+                        ->where('context', 'mgr')
                         ->exists();
                 }
             }
