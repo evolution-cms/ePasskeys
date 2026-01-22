@@ -48,6 +48,9 @@ class FindPasskeyToAuthenticateAction
         if (!$publicKeyCredentialSource) {
             return null;
         }
+        if ($publicKeyCredentialSource instanceof CredentialRecord) {
+            $publicKeyCredentialSource = CredentialRecordConverter::toPublicKeyCredentialSource($publicKeyCredentialSource);
+        }
 
         $this->updatePasskey($passkey, $publicKeyCredentialSource);
 
@@ -88,7 +91,7 @@ class FindPasskeyToAuthenticateAction
         PublicKeyCredentialRequestOptions $passkeyOptions,
         Passkey $passkey,
         string $hostName,
-    ): ?PublicKeyCredentialSource {
+    ): PublicKeyCredentialSource|CredentialRecord|null {
         $configureCeremonyStepManagerFactoryAction = Config::getAction(
             'configure_ceremony_step_manager_factory',
             ConfigureCeremonyStepManagerFactoryAction::class

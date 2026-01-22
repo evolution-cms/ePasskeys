@@ -31,6 +31,9 @@ class StorePasskeyAction
             $passkeyOptionsJson,
             $hostName,
         );
+        if ($publicKeyCredentialSource instanceof CredentialRecord) {
+            $publicKeyCredentialSource = CredentialRecordConverter::toPublicKeyCredentialSource($publicKeyCredentialSource);
+        }
 
         $passkeyModel = Config::getPasskeyModel();
 
@@ -46,7 +49,7 @@ class StorePasskeyAction
         string $passkeyJson,
         string $passkeyOptionsJson,
         string $hostName,
-    ): PublicKeyCredentialSource {
+    ): PublicKeyCredentialSource|CredentialRecord {
         $passkeyOptions = $this->getPasskeyOptions($passkeyOptionsJson);
         $publicKeyCredential = $this->getPasskey($passkeyJson);
 
