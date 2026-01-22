@@ -64,6 +64,10 @@ Event::listen('evolution.OnManagerLoginFormRender', function () {
         Log::warning('ePasskeys passkey lookup failed: ' . $e->getMessage());
     }
 
+    if (!$hasPasskey) {
+        return '';
+    }
+
     return \View::make('ePasskeys::manager.login-button', [
         'assetsUrl' => $baseUrl,
         'optionsUrl' => $optionsUrl,
