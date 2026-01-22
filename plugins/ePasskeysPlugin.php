@@ -36,30 +36,39 @@ Event::listen('evolution.OnManagerLoginFormRender', function () {
     $optionsUrl = Config::buildManagerUrl($prefix . '/auth/options');
     $authUrl = Config::buildManagerUrl($prefix . '/auth');
     $modelClass = Config::getPasskeyModel();
+    $hasPasskey = false;
 
     try {
         if (!class_exists($modelClass)) {
-            return '';
-        }
-
-        $model = new $modelClass();
-        $table = method_exists($model, 'getTable') ? $model->getTable() : 'passkeys';
-        if (class_exists(Schema::class) && !Schema::hasTable($table)) {
-            return '';
-        }
-
-        if (!$modelClass::query()->where('context', 'mgr')->exists()) {
-            return '';
+            $hasPasskey = false;
+        } else {
+            $model = new $modelClass();
+            $table = method_exists($model, 'getTable') ? $model->getTable() : 'passkeys';
+            if (class_exists(Schema::class) && Schema::hasTable($table)) {
+                $userId = null;
+                if (function_exists('evo') && method_exists(evo(), 'getLoginUserID')) {
+                    $userId = evo()->getLoginUserID('mgr');
+                }
+                if (!$userId && isset($_SESSION['mgrInternalKey'])) {
+                    $userId = (int)$_SESSION['mgrInternalKey'];
+                }
+                if ($userId) {
+                    $hasPasskey = $modelClass::query()
+                        ->where('context', 'mgr')
+                        ->where('authenticatable_id', $userId)
+                        ->exists();
+                }
+            }
         }
     } catch (\Throwable $e) {
         Log::warning('ePasskeys passkey lookup failed: ' . $e->getMessage());
-        return '';
     }
 
     return \View::make('ePasskeys::manager.login-button', [
         'assetsUrl' => $baseUrl,
         'optionsUrl' => $optionsUrl,
         'authUrl' => $authUrl,
+        'hasPasskey' => $hasPasskey,
     ])->toHtml();
 });
 

@@ -119,6 +119,47 @@
       return;
     }
 
+    if (config.auto) {
+      var simpleAuto = getSimpleWebAuthn();
+      var startAuthenticationAuto = simpleAuto.startAuthentication || window.startAuthentication;
+      var supportsAutofill = simpleAuto.browserSupportsWebAuthnAutofill || window.browserSupportsWebAuthnAutofill;
+      var startConditional = function () {
+        if (typeof startAuthenticationAuto !== 'function') {
+          return;
+        }
+        fetchJson(config.optionsUrl)
+          .then(function (options) {
+            return startAuthenticationAuto({
+              optionsJSON: options,
+              useBrowserAutofill: true,
+              verifyBrowserAutofillInput: false
+            });
+          })
+          .then(function (credential) {
+            setValue(loginForm.responseInput, JSON.stringify(credential));
+            if (rememberSelector && loginForm.rememberInput) {
+              setValue(loginForm.rememberInput, getValue(rememberSelector));
+            }
+            loginForm.form.submit();
+          })
+          .catch(function (error) {
+            console.warn('Passkey autofill failed:', error);
+          });
+      };
+
+      if (typeof supportsAutofill === 'function') {
+        supportsAutofill()
+          .then(function (supported) {
+            if (supported) {
+              startConditional();
+            }
+          })
+          .catch(function () {});
+      } else {
+        startConditional();
+      }
+    }
+
     button.addEventListener('click', function () {
       var simple = getSimpleWebAuthn();
       var startAuthentication = simple.startAuthentication || window.startAuthentication;
