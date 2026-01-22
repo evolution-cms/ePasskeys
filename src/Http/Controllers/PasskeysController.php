@@ -3,6 +3,7 @@
 namespace EvolutionCMS\ePasskeys\Http\Controllers;
 
 use EvolutionCMS\ePasskeys\Support\Config;
+use EvolutionCMS\ePasskeys\Support\Theme;
 use Illuminate\Http\Request;
 
 class PasskeysController
@@ -32,6 +33,7 @@ class PasskeysController
         $prefix = Config::getContextRoutePrefix('mgr');
         $managerBase = Config::getManagerUrl();
         $siteBase = rtrim(Config::getSiteUrl(), '/');
+        $themeMode = Theme::getManagerThemeMode();
 
         return view('ePasskeys::manager.passkeys', [
             'passkeys' => $passkeys,
@@ -39,6 +41,9 @@ class PasskeysController
             'registerUrl' => rtrim($managerBase, '/') . '/' . $prefix . '/register',
             'deleteBaseUrl' => rtrim($managerBase, '/') . '/' . $prefix . '/credentials',
             'assetsUrl' => $siteBase . '/assets/plugins/ePasskeys/js',
+            'cssUrl' => $siteBase . '/assets/plugins/ePasskeys/css/epasskeys.min.css',
+            'themeMode' => $themeMode,
+            'themeClass' => Theme::getTailwindThemeClass(),
         ]);
     }
 }

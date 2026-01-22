@@ -47,6 +47,7 @@ class ePasskeysServiceProvider extends ServiceProvider
 
         $this->publishes([
             dirname(__DIR__) . '/public/js' => public_path('assets/plugins/ePasskeys/js'),
+            dirname(__DIR__) . '/css/tailwind.min.css' => public_path('assets/plugins/ePasskeys/css/epasskeys.min.css'),
         ], 'epasskeys-assets');
 
         $this->publishes([

@@ -2,6 +2,7 @@
 
 use EvolutionCMS\ePasskeys\Support\Config;
 use EvolutionCMS\ePasskeys\Support\Log;
+use Illuminate\Support\Facades\Schema;
 
 if (!function_exists('ePasskeys_settings')) {
     function ePasskeys_settings(): array
@@ -34,6 +35,26 @@ Event::listen('evolution.OnManagerLoginFormRender', function () {
     $prefix = Config::getContextRoutePrefix('mgr');
     $optionsUrl = Config::buildManagerUrl($prefix . '/auth/options');
     $authUrl = Config::buildManagerUrl($prefix . '/auth');
+    $modelClass = Config::getPasskeyModel();
+
+    try {
+        if (!class_exists($modelClass)) {
+            return '';
+        }
+
+        $model = new $modelClass();
+        $table = method_exists($model, 'getTable') ? $model->getTable() : 'passkeys';
+        if (class_exists(Schema::class) && !Schema::hasTable($table)) {
+            return '';
+        }
+
+        if (!$modelClass::query()->where('context', 'mgr')->exists()) {
+            return '';
+        }
+    } catch (\Throwable $e) {
+        Log::warning('ePasskeys passkey lookup failed: ' . $e->getMessage());
+        return '';
+    }
 
     return \View::make('ePasskeys::manager.login-button', [
         'assetsUrl' => $baseUrl,

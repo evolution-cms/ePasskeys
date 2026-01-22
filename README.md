@@ -20,6 +20,12 @@ php artisan vendor:publish --provider="EvolutionCMS\\ePasskeys\\ePasskeysService
 php artisan vendor:publish --provider="EvolutionCMS\\ePasskeys\\ePasskeysServiceProvider" --tag=epasskeys-assets
 ```
 
+## Build Tailwind CSS (manager UI)
+```bash
+php artisan tailwind:build epasskeys
+php artisan vendor:publish --provider="EvolutionCMS\\ePasskeys\\ePasskeysServiceProvider" --tag=epasskeys-assets
+```
+
 Optional (views override):
 ```bash
 php artisan vendor:publish --provider="EvolutionCMS\\ePasskeys\\ePasskeysServiceProvider" --tag=epasskeys-views

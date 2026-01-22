@@ -7,6 +7,7 @@ use EvolutionCMS\ePasskeys\Support\Config;
 use EvolutionCMS\ePasskeys\Support\Log;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 
 class RegisterController
@@ -30,10 +31,10 @@ class RegisterController
             abort(403);
         }
 
-        $request->validate([
+        Validator::make($request->all(), [
             'passkey' => ['required', 'string'],
             'name' => ['required', 'string', 'max:255'],
-        ]);
+        ])->validate();
 
         $optionsJson = Session::pull('epasskeys.mgr.register.options');
         if (!is_string($optionsJson) || $optionsJson === '') {

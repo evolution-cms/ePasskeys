@@ -8,6 +8,7 @@ use EvolutionCMS\ePasskeys\Support\Log;
 use EvolutionCMS\ePasskeys\Support\Throttle;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 
 class AuthenticateController
@@ -25,9 +26,9 @@ class AuthenticateController
 
         Throttle::check($request, 'epasskeys.auth', 5, 60);
 
-        $request->validate([
+        Validator::make($request->all(), [
             'start_authentication_response' => ['required', 'string'],
-        ]);
+        ])->validate();
 
         $optionsJson = Session::pull('epasskeys.mgr.auth.options');
         if (!is_string($optionsJson) || $optionsJson === '') {
