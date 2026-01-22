@@ -1,0 +1,31 @@
+{
+  "name": "evolution-cms/epasskeys",
+  "description": "Passkeys (WebAuthn) for Evolution CMS",
+  "type": "evolutioncms-plugin",
+  "keywords": [
+    "evo",
+    "evocms",
+    "evolution",
+    "evolution-cms",
+    "passkeys",
+    "webauthn",
+    "passwordless"
+  ],
+  "require": {
+    "php": "^8.3",
+    "evolution-cms/evolution": "^3.5.2",
+    "web-auth/webauthn-lib": "^5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "EvolutionCMS\\ePasskeys\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "EvolutionCMS\\ePasskeys\\ePasskeysServiceProvider"
+      ]
+    }
+  }
+}
