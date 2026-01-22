@@ -103,11 +103,11 @@ class FindPasskeyToAuthenticateAction
             $validator = AuthenticatorAssertionResponseValidator::create($requestCsm);
 
             $result = $validator->check(
-                publicKeyCredentialSource: $passkey->data,
-                authenticatorAssertionResponse: $publicKeyCredential->response,
-                publicKeyCredentialRequestOptions: $passkeyOptions,
-                host: $hostName,
-                userHandle: null,
+                $passkey->data,
+                $publicKeyCredential->response,
+                $passkeyOptions,
+                $hostName,
+                null,
             );
             if ($result instanceof CredentialRecord) {
                 return CredentialRecordConverter::toPublicKeyCredentialSource($result);

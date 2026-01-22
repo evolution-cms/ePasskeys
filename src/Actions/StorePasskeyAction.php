@@ -66,9 +66,9 @@ class StorePasskeyAction
 
         try {
             $result = AuthenticatorAttestationResponseValidator::create($creationCsm)->check(
-                authenticatorAttestationResponse: $publicKeyCredential->response,
-                publicKeyCredentialCreationOptions: $passkeyOptions,
-                host: $hostName,
+                $publicKeyCredential->response,
+                $passkeyOptions,
+                $hostName,
             );
             if ($result instanceof CredentialRecord) {
                 return CredentialRecordConverter::toPublicKeyCredentialSource($result);
