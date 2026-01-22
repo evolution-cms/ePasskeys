@@ -14,6 +14,10 @@ try {
     console.warn('⚠  Global Tailwind config not found, using local only.');
 }
 
+const baseExtend = (base && base.theme && base.theme.extend) ? base.theme.extend : {};
+const baseColors = baseExtend.colors || {};
+const baseRadius = baseExtend.borderRadius || {};
+
 module.exports = {
     content: [
         ...((base && base.content) ? base.content : []),
@@ -23,7 +27,17 @@ module.exports = {
     theme: {
         ...(base?.theme || {}),
         extend: {
-            ...(base?.theme?.extend || {}),
+            ...baseExtend,
+            colors: {
+                ...baseColors,
+                primary: baseColors.primary || '#2563eb',
+                danger: baseColors.danger || '#dc2626',
+                success: baseColors.success || '#059669',
+            },
+            borderRadius: {
+                ...baseRadius,
+                xl: baseRadius.xl || '1rem',
+            },
         },
     },
 
