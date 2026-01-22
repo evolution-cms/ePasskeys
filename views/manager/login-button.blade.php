@@ -6,48 +6,22 @@
         .epasskeys-login__button {
             width: 100%;
             border-radius: 20px;
-            background-color: #449d44;
-            color: #fff;
-            border: 1px solid #419641;
-            padding: 0.65rem 1rem;
-            min-height: 44px;
-            font-size: 0.95rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            font-size: 1rem;
+            font-weight: 400;
         }
         .epasskeys-login__button--primary {
-            min-height: 50px;
-            font-size: 1rem;
+            min-height: 44px;
         }
-        .epasskeys-login__toggle {
+        #epasskeys-use-password {
+            color: #818a91 !important;
             display: inline-block;
             margin-top: 0.5rem;
-т            font-size: 0.8125rem;
-            color: #818a91;
-            text-decoration: none;
-            background: none;
-            border: none;
-            padding: 0;
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
             cursor: pointer;
-        }
-        .epasskeys-login__toggle:hover,
-        .epasskeys-login__toggle:focus {
-            color: #014c8c;
-            text-decoration: underline;
-        }
-        .loginbox-light .epasskeys-login__toggle { color: #666; }
-        .epasskeys-login__button:hover,
-        .epasskeys-login__button:focus {
-            background-color: #5cb85c;
-            border-color: #5cb85c;
-        }
-        .loginbox-light .epasskeys-login__button {
-            color: #fff;
-            background-color: #449d44;
-            border-color: #419641;
-        }
-        .loginbox-light .epasskeys-login__button:hover,
-        .loginbox-light .epasskeys-login__button:focus {
-            background-color: #5cb85c;
-            border-color: #5cb85c;
         }
         #loginfrm.epasskeys-passkey-only .form-group:not(.form-group--logo):not(.epasskeys-login) {
             display: none;
@@ -64,10 +38,10 @@
         <div class="alert alert-danger">{{ session('epasskeys.message') }}</div>
     @endif
 
-    <button type="button" id="epasskeys-login-button" class="btn epasskeys-login__button epasskeys-login__button--primary">
+    <button type="button" id="epasskeys-login-button" class="btn btn-success epasskeys-login__button epasskeys-login__button--primary">
         {{ __('ePasskeys::login.button') }}
     </button>
-    <button type="button" id="epasskeys-use-password" class="epasskeys-login__toggle">
+    <button type="button" id="epasskeys-use-password">
         {{ __('ePasskeys::login.use_password') }}
     </button>
 
