@@ -5,6 +5,7 @@ namespace EvolutionCMS\ePasskeys\Http\Controllers;
 use EvolutionCMS\ePasskeys\Actions\StorePasskeyAction;
 use EvolutionCMS\ePasskeys\Support\Config;
 use EvolutionCMS\ePasskeys\Support\Log;
+use EvolutionCMS\ePasskeys\Support\SecondFactor;
 use EvolutionCMS\ePasskeys\Support\SessionStore;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,6 +30,10 @@ class RegisterController
         if (!Config::isAllowedOrigin($request)) {
             Log::warning('Blocked register request due to invalid origin.');
             abort(403);
+        }
+
+        if (SecondFactor::isLocked((int) evo()->getLoginUserID('mgr'))) {
+            return redirect(Config::buildManagerUrl('index.php?a=202'));
         }
 
         Validator::make($request->all(), [

@@ -4,6 +4,7 @@ namespace EvolutionCMS\ePasskeys\Http\Controllers;
 
 use EvolutionCMS\ePasskeys\Support\Config;
 use EvolutionCMS\ePasskeys\Support\Log;
+use EvolutionCMS\ePasskeys\Support\SecondFactor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -21,6 +22,10 @@ class DeletePasskeyController
 
         if (method_exists(evo(), 'hasPermission') && !evo()->hasPermission('epasskeys')) {
             abort(403);
+        }
+
+        if (SecondFactor::isLocked((int) evo()->getLoginUserID('mgr'))) {
+            return redirect(Config::buildManagerUrl('index.php?a=202'));
         }
 
         $userId = evo()->getLoginUserID('mgr');

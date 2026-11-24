@@ -103,6 +103,18 @@ Event::listen('evolution.OnManagerLoginFormRender', function () {
     ])->toHtml();
 });
 
+// Two-factor authentication of Evolution CMS 3.6+; older versions never fire the event.
+Event::listen('evolution.OnTwoFactorMethods', function ($params) {
+    if (!Config::isEnabled()) {
+        return;
+    }
+
+    $params['twoFactor']->extend(
+        \EvolutionCMS\ePasskeys\Support\SecondFactor::METHOD,
+        new \EvolutionCMS\ePasskeys\Support\PasskeyTwoFactorMethod()
+    );
+});
+
 Event::listen('evolution.OnManagerMenuPrerender', function ($params) {
     if (!ePasskeys_enabled('mgr')) {
         return serialize($params['menu']);

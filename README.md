@@ -63,6 +63,20 @@ Create/delete passkeys for the current manager user.
 The menu item appears in **Tools** if the manager role has the `epasskeys` permission.
 The migration `2026_01_22_000002_add_epasskeys_permissions.php` creates this permission and assigns it to role ID 1 (admin).
 
+### Two-factor authentication (Evolution CMS 3.6+)
+The plugin adds **Passkey** to the two-factor methods of the core (System settings > Security, the user form, and
+the user's own two-factor page). It uses the same passkeys as the passwordless login and requires user verification.
+A user without a passkey registers one at the first sign-in.
+
+- Passwordless sign-in keeps working. A passkey that verified its user (PIN, fingerprint, face) counts as two
+  factors; without user verification the second factor of the account is asked for as after a password.
+- While a passkey is the second factor, passkeys are created and deleted only after it was passed on the two-factor page.
+- An administrator's two-factor reset in the user form deletes the user's passkeys.
+- For website users enable `contexts.web.enable`.
+
+On older versions nothing changes. See `src/Support/PasskeyTwoFactorMethod.php` for an example of a method
+with its own form, set-up and script.
+
 ## Config
 Config file:
 ```

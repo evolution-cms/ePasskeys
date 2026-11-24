@@ -5,6 +5,7 @@ namespace EvolutionCMS\ePasskeys\Http\Controllers;
 use EvolutionCMS\ePasskeys\Actions\FindPasskeyToAuthenticateAction;
 use EvolutionCMS\ePasskeys\Support\Config;
 use EvolutionCMS\ePasskeys\Support\Log;
+use EvolutionCMS\ePasskeys\Support\SecondFactor;
 use EvolutionCMS\ePasskeys\Support\SessionStore;
 use EvolutionCMS\ePasskeys\Support\Throttle;
 use Illuminate\Http\RedirectResponse;
@@ -60,12 +61,22 @@ class AuthenticateController
 
         $remember = $request->boolean('remember');
         try {
-            \UserManager::loginById([
-                'id' => $passkey->authenticatable_id,
-                'rememberme' => $remember,
-                'context' => 'mgr',
-            ]);
+            SecondFactor::login(
+                fn () => \UserManager::loginById([
+                    'id' => $passkey->authenticatable_id,
+                    'rememberme' => $remember,
+                    'context' => 'mgr',
+                ]),
+                SecondFactor::isUserVerified(
+                    $findAuthenticatableUsingPasskey,
+                    $request->input('start_authentication_response')
+                )
+            );
         } catch (\Throwable $e) {
+            if (SecondFactor::isPending($e)) {
+                // the manager login page asks for the second factor
+                return redirect(Config::getManagerUrl());
+            }
             Log::error('Failed to login via passkey: ' . $e->getMessage());
             return $this->invalidPasskeyResponse();
         }

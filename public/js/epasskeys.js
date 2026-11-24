@@ -192,6 +192,52 @@
     bindLogin(config);
   };
 
+  // Second sign-in step: the form is sent once the passkey has answered.
+  function bindSecondFactor(config) {
+    var input = document.querySelector(config.input);
+    var error = document.querySelector(config.error);
+    var form = input ? input.form : null;
+
+    if (!form) {
+      return;
+    }
+
+    form.addEventListener('submit', function (event) {
+      var submitter = event.submitter;
+      // "cancel" and "send again" need no passkey
+      if (input.value !== '' || (submitter && submitter.name === 'two_factor')) {
+        return;
+      }
+      event.preventDefault();
+
+      var simple = getSimpleWebAuthn();
+      var start = config.type === 'register' ? simple.startRegistration : simple.startAuthentication;
+      var fail = function (reason) {
+        console.warn('Passkey failed:', reason);
+        error.textContent = config.failed;
+        error.hidden = false;
+      };
+      if (!hasWebAuthn() || typeof start !== 'function') {
+        fail('WebAuthn is not available.');
+        return;
+      }
+
+      error.hidden = true;
+      start({ optionsJSON: config.options })
+        .then(function (credential) {
+          input.value = JSON.stringify(credential);
+          form.submit();
+        })
+        .catch(fail);
+    });
+  }
+
+  window.ePasskeysSecondFactor = function (config) {
+    if (config) {
+      bindSecondFactor(config);
+    }
+  };
+
   window.ePasskeysRegister = function (config) {
     if (!config) {
       return;
